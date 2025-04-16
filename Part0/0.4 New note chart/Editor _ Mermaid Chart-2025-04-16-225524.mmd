@@ -1,0 +1,27 @@
+sequenceDiagram
+    participant browser as Client Browser
+    participant server as Web Server
+
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
+    Note right of browser: Button click sends user input via HTTP POST request to the server address new_note.
+    activate server
+    server-->>browser: The server responds with HTTP status code 302.
+    Note left of server: Server asks the browser to reload the Notes page, and perform multiple HTTP GET requests.
+    deactivate server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
+    activate server
+    server-->>browser: CSS File
+    deactivate server
+    
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
+    activate server
+    server-->>browser: JavaScript File
+    deactivate server
+    Note right of browser: Browser execute the JavaScript code that fetches the JSON data
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
+    activate server
+    server-->>browser: [{ "content": "Hi Texas 04/16/2025 4:32 pm", "date": "2025-04-16T21:33:41.494Z" }, ... ]
+    deactivate server
+    Note right of browser: Renders notes on the HTML page  
