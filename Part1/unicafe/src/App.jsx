@@ -6,6 +6,11 @@ const Button = (props) => {
   )
 
 }
+const StatisticLine=(props)=>{
+  return(
+    <p>{props.text} {props.value}</p>
+  )
+}
 
 const Statistics = (props) => {
   const {good,neutral,bad} = props.sentiment;
@@ -25,12 +30,13 @@ const Statistics = (props) => {
     return (
       <div>
         <h2>statistics</h2>
-        <p>good {good}</p>
-        <p>neutral {neutral}</p>
-        <p>bad {bad}</p>
-        <p>all {props.total}</p>
-        <p>average {calculateAverage()}</p>
-        <p>positive {calculatePositives() * 100} %</p>
+        <StatisticLine text="good" value={good} />
+        <StatisticLine text="neutral" value={neutral} />
+        <StatisticLine text="bad" value={bad} />
+        <StatisticLine text="total" value={props.total} />
+        <StatisticLine text="average" value={calculateAverage()} />
+        <StatisticLine text="positive" value={`${calculatePositives()*100} %`} /> 
+       
       </div>
     )  
   }
