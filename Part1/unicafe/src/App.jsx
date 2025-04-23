@@ -11,17 +11,33 @@ const App=()=>{
   const [good, setGood] = useState(0);
   const [neutral, setNeutral] = useState(0);
   const [bad, setBad] = useState(0);
+  const [allfeed, setAllfeed] = useState(0);
+  const [score, setScore] = useState(0);
 
-  const handleGoodClick=()=>{
+  const handleGoodClick=()=>{    
     setGood(good+1);
+    setAllfeed(allfeed+1);
+    setScore(score+1);
   }
   
   const handleNeutralClick=()=>{
     setNeutral(neutral+1);
+    setAllfeed(allfeed+1);
+    
   }
   
   const handleBadClick=()=>{
     setBad(bad+1);
+    setAllfeed(allfeed+1);
+    setScore(score-1);
+  }
+  
+  const calculateAverage=()=>{
+    return allfeed === 0? 0:score/allfeed; 
+  }
+
+  const calculatePositives =()=>{
+    return allfeed === 0? 0:good/allfeed;  
   }
 
   return (
@@ -34,6 +50,9 @@ const App=()=>{
       <p>good {good}</p>
       <p>neutral {neutral}</p>
       <p>bad {bad}</p>
+      <p>all {allfeed}</p>
+      <p>average {calculateAverage()}</p>
+      <p>positive {calculatePositives()*100} %</p>
     </div>
   )
 
