@@ -16,17 +16,25 @@ const Statistics = (props) => {
   const calculatePositives = () => {
     return props.total === 0 ? 0 : good / props.total;
   }
-  return (
-    <div>
-      <h2>statistics</h2>
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
-      <p>all {props.total}</p>
-      <p>average {calculateAverage()}</p>
-      <p>positive {calculatePositives() * 100} %</p>
-    </div>
-  )
+
+  if (props.total === 0) {
+    return(
+      <h3>No feedback given</h3>
+    )
+  } else {
+    return (
+      <div>
+        <h2>statistics</h2>
+        <p>good {good}</p>
+        <p>neutral {neutral}</p>
+        <p>bad {bad}</p>
+        <p>all {props.total}</p>
+        <p>average {calculateAverage()}</p>
+        <p>positive {calculatePositives() * 100} %</p>
+      </div>
+    )  
+  }
+  
 
 }
 
