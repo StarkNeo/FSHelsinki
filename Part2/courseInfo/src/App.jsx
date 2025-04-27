@@ -71,8 +71,8 @@ const App = () => {
       },
       {
         id:4,
-        name:"Hooks",
-        exercises: 10
+        name:"Redux",
+        exercises: 11
       }
     ],
     
