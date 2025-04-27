@@ -25,12 +25,10 @@ const Content = (props) => {
   )
 }
 
-const Total = (props) => {
-  console.log(props);
-  let total = 0;
-  for (let index = 0; index < props.parts.length; index++) {
-    total+=props.parts[index].exercises;    
-  }
+const Total = ({parts}) => {
+  console.log(parts);
+  let total = parts.reduce((s,p)=>s+p.exercises,0)
+  console.log(total)
   return (
     <p>Number of exercises {total}</p>
   )
