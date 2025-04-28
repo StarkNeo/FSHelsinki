@@ -5,13 +5,26 @@ const App=()=>{
   const [persons, setPersons] = useState([{name:'Arto Hellas'}])
   const [newName, setNewName] = useState("new name")
 
+  const validateName=()=>{
+    
+  }
   const addPerson=(event)=>{
     event.preventDefault()
-    let newPerson ={
-      name:newName
+    let foundPerson = persons.filter(person=>person.name===newName)
+    console.log(foundPerson.length)
+    if (foundPerson.length) {
+      alert(`${newName} is already added to phonebook`)
+      
+    } else {
+      let newPerson ={
+        name:newName
+      }
+      setPersons(persons.concat(newPerson))
+      alert(`${newName} added to phonebook`)
+      setNewName("new name")  
     }
-    setPersons(persons.concat(newPerson))
-    setNewName("new name")
+    
+    
   }
 
   const handleNameChange=(event)=>{
@@ -31,7 +44,7 @@ const App=()=>{
         </div>
       </form>
       <h2>Numbers</h2>
-      {persons.map(person=><p key={person.name}>{person.name}</p>)}
+      {persons.map(person=><p key={persons.name}>{person.name}</p>)}
     </div>
 
   )
