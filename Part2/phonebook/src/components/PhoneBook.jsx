@@ -8,6 +8,7 @@ const PhoneBook =({book})=>{
         <div>
             <h2>Phonebook</h2>
             <Search value={book.value} filter={book.changeFilter} />
+            <h2>add a new</h2>
             <AddPerson 
                 addPerson={book.add} 
                 name={book.name} 
