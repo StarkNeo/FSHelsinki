@@ -1,5 +1,8 @@
 import { useState } from 'react'
-
+import AddPerson from './components/AddPerson'
+import Filter from './components/Filter'
+import Search from './components/Search'
+import PhoneBook from './components/PhoneBook'
 
 const App=()=>{
   const [persons, setPersons] = useState([
@@ -8,8 +11,8 @@ const App=()=>{
     { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
     { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
   ])
-  const [newName, setNewName] = useState("new name")
-  const [newNumber, setNewNumber] = useState("new number")
+  const [newName, setNewName] = useState("")
+  const [newNumber, setNewNumber] = useState("")
   const [filterValue, setFilterValue] = useState("")
   const [personsFiltered, setPersonsFiltered] = useState()
 
@@ -28,7 +31,10 @@ const App=()=>{
       }
       setPersons(persons.concat(newPerson))
       alert(`${newName} added to phonebook`)
-      setNewName("new name")  
+      setNewName("")
+      setNewNumber("")
+      setFilterValue("")
+      setPersonsFiltered("")  
     }
     
     
@@ -53,6 +59,7 @@ const App=()=>{
   const handleNumberChange=(event)=>{
     console.log(event.target.value)
     setNewNumber(event.target.value)
+    
   }
 
   const handleNameChange=(event)=>{
@@ -60,21 +67,23 @@ const App=()=>{
     setNewName(event.target.value)
   }
 
+  let phoneBook = {
+    name:newName,
+    number:newNumber,
+    persons:persons,
+    personsFiltered:personsFiltered,
+    value:filterValue,
+    changeName:handleNameChange,
+    changeNumber: handleNumberChange,
+    changeFilter: handleFilterChange,
+    add:addPerson,
+  }
   return(
     <div>
-      <h2>Phonebook</h2>
-      filter shown with <input type='text' value={filterValue} onChange={handleFilterChange} />
-      <form onSubmit={addPerson}>
-        <div>name: <input onChange={handleNameChange} value={newName} /></div>
-        <div>number: <input onChange={handleNumberChange} value={newNumber} /></div>
-        <div><button type='submit'>add</button></div>
-      </form>
-      <h2>Numbers</h2>
-      {personsFiltered?
-      personsFiltered.map(person=><p key={person.id}>{person.name} {person.number}</p>)
-      :persons.map(person=><p key={person.id}>{person.name} {person.number}</p>)}
+      <PhoneBook book={phoneBook} />      
+      
     </div>
-
+    
   )
 }
 export default App
