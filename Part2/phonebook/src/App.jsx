@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import PhoneBook from './components/PhoneBook'
+import serverReq from './services/serverRequests'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -10,14 +10,16 @@ const App = () => {
   const [personsFiltered, setPersonsFiltered] = useState()
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
-      })
+    serverReq.getAll()
+      .then(response => setPersons(response))
   }, [])
 
   const addPerson = (event) => {
     event.preventDefault()
+    if(newName.trim() ==="" || newNumber.trim() ===""){
+      alert("Empty fields, review your information")
+      return
+    }
     let foundPerson = persons.filter(person => person.name === newName)
     console.log(foundPerson.length)
     if (foundPerson.length) {
@@ -26,20 +28,19 @@ const App = () => {
     } else {
       let newPerson = {
         name: newName,
-        number: newNumber,
-        //id:persons.length+1
+        number: newNumber
       }
-      axios.post('http://localhost:3001/persons', newPerson)
+      serverReq.create(newPerson)
         .then(response => {
-          console.log(response.data)
+          console.log(response)
           alert(`${newName} added to phonebook`)
-          setPersons(persons.concat(response.data))          
+          setPersons(persons.concat(response))
           setNewName("")
           setNewNumber("")
           setFilterValue("")
           setPersonsFiltered("")
         })
-        .catch(error=>{
+        .catch(error => {
           console.log(error)
         })
 
