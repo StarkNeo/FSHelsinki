@@ -76,6 +76,19 @@ const App = () => {
     setNewName(event.target.value)
   }
 
+  const handleRemove=(person)=>{
+    if(confirm(`Delete ${person.name}?`)){
+      
+      serverReq.remove(person.id).then(
+        setPersons(()=>persons.filter(p=>p.id !== person.id))        
+      )
+      alert(`${person.name} removed`)
+    } else{
+      console.log(`${person.name} still on the game`)
+    }
+    
+  }
+
   let phoneBook = {
     name: newName,
     number: newNumber,
@@ -86,6 +99,7 @@ const App = () => {
     changeNumber: handleNumberChange,
     changeFilter: handleFilterChange,
     add: addPerson,
+    handleRemove
   }
   return (
     <div>

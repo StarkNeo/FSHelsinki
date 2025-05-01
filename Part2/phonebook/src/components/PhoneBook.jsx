@@ -17,7 +17,7 @@ const PhoneBook =({book})=>{
                 changeNumber={book.changeNumber}
             />
             <h2>Numbers</h2>
-            <Filter persons={book.persons} personsFilter={book.personsFiltered} />
+            <Filter persons={book.persons} personsFilter={book.personsFiltered} removePerson={book.handleRemove} />
         </div>
     )
 }
