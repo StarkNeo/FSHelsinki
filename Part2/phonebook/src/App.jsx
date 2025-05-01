@@ -8,10 +8,19 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("")
   const [filterValue, setFilterValue] = useState("")
   const [personsFiltered, setPersonsFiltered] = useState()
+  const [message, setMessage]=useState(" ")
 
   useEffect(() => {
     serverReq.getAll()
-      .then(response => setPersons(response))
+      .then(response =>{
+        console.log(response)
+        setPersons(response)
+        
+        setMessage("Contacts Loaded")
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000);
+      }).catch(error=>setMessage("Loading contacts failed"))
   }, [])
 
   const addPerson = (event) => {
@@ -35,6 +44,8 @@ const App = () => {
           serverReq.update(foundPerson[0].id,newPerson)
           .then(response=>{
             setPersons(persons.filter(p=>p.id!==foundPerson[0].id).concat(response))
+            setMessage("Record Updated")
+            
             setNewName("")
             setNewNumber("")
             setFilterValue("")
@@ -43,7 +54,8 @@ const App = () => {
         }
       
       } else {
-        alert(`${newName} is already added to phonebook`)
+        //alert(`${newName} is already added to phonebook`)
+        setMessage(`${newName} is already added to phonebook`)
       }      
 
     } else {
@@ -54,7 +66,8 @@ const App = () => {
       serverReq.create(newPerson)
         .then(response => {
           console.log(response)
-          alert(`${newName} added to phonebook`)
+          //alert(`${newName} added to phonebook`)
+          setMessage(`${newName} added to phonebook`)
           setPersons(persons.concat(response))
           setNewName("")
           setNewNumber("")
@@ -66,13 +79,17 @@ const App = () => {
         })
 
     }
+    setTimeout(()=>{
+      setMessage(null)
+    },5000)
 
 
   }
 
   const handleFilterChange = (event) => {
     let value = event.target.value
-    console.log(value)
+    console.log(value.length)
+    
     setFilterValue(value)
     let names = persons.map(person => person.name.toLowerCase())
     console.log(names)
@@ -83,6 +100,7 @@ const App = () => {
       }
     }
     console.log(namesFiltered)
+    value.length>0?setMessage(`Names filterd by: ${value}`):setMessage(" ")
     setPersonsFiltered(namesFiltered)
   }
 
@@ -103,11 +121,13 @@ const App = () => {
       serverReq.remove(person.id).then(
         setPersons(()=>persons.filter(p=>p.id !== person.id))        
       )
-      alert(`${person.name} removed`)
+      setMessage(`${person.name} removed`)
     } else{
       console.log(`${person.name} still on the game`)
     }
-    
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000);
   }
 
   let phoneBook = {
@@ -116,6 +136,7 @@ const App = () => {
     persons: persons,
     personsFiltered: personsFiltered,
     value: filterValue,
+    message,
     changeName: handleNameChange,
     changeNumber: handleNumberChange,
     changeFilter: handleFilterChange,

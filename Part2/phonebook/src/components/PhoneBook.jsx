@@ -1,12 +1,14 @@
 import AddPerson from "./AddPerson";
 import Filter from "./Filter";
 import Search from "./Search";
+import Notification from './Notification';
 
 const PhoneBook =({book})=>{
     console.log(book)
     return(
         <div>
             <h2>Phonebook</h2>
+            <Notification message={book.message} />
             <Search value={book.value} filter={book.changeFilter} />
             <h2>add a new</h2>
             <AddPerson 
