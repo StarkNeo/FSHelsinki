@@ -116,15 +116,25 @@ const App = () => {
   }
 
   const handleRemove=(person)=>{
-    if(confirm(`Delete ${person.name}?`)){
+    serverReq.getPerson(person.id)
+    .then(response=>{
+      console.log(response.data)
+      if(confirm(`Delete ${person.name}?`)){      
+        serverReq.remove(person.id).then(
+          setPersons(()=>persons.filter(p=>p.id !== person.id))        
+        )
+        setMessage(`${person.name} removed`)
+      } else{
+        console.log(`${person.name} still on the game`)
+      }
       
-      serverReq.remove(person.id).then(
-        setPersons(()=>persons.filter(p=>p.id !== person.id))        
-      )
-      setMessage(`${person.name} removed`)
-    } else{
-      console.log(`${person.name} still on the game`)
-    }
+    
+    
+    })
+    .catch(error=>{
+      setMessage(`Information of ${person.name} has already been removed from server`)
+      setPersons(persons.filter(p=>p.id!==person.id))
+    })
     setTimeout(() => {
       setMessage(null)
     }, 5000);

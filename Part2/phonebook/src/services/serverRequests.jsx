@@ -7,6 +7,11 @@ const getAll = () => {
     return request.then(response => response.data)
 }
 
+const getPerson=(id)=>{
+    let request = axios.get(`${url}/${id}`)
+    return request
+}
+
 const create = (newObject) => {
     console.log(newObject)
     if (newObject) {
@@ -28,4 +33,4 @@ const remove =(id)=>{
     return request.then(response=>console.log(response.data))
 }
 
-export default { getAll, create, update, remove }
+export default { getAll, create, update, remove, getPerson }
