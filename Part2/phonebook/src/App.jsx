@@ -21,9 +21,30 @@ const App = () => {
       return
     }
     let foundPerson = persons.filter(person => person.name === newName)
+    console.log(foundPerson)
     console.log(foundPerson.length)
     if (foundPerson.length) {
-      alert(`${newName} is already added to phonebook`)
+      if (foundPerson[0].number !==newNumber) {
+        let update = confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
+        console.log(update)
+        if (update) {
+          let newPerson ={
+            name:newName,
+            number:newNumber
+          }
+          serverReq.update(foundPerson[0].id,newPerson)
+          .then(response=>{
+            setPersons(persons.filter(p=>p.id!==foundPerson[0].id).concat(response))
+            setNewName("")
+            setNewNumber("")
+            setFilterValue("")
+            setPersonsFiltered("")
+          })
+        }
+      
+      } else {
+        alert(`${newName} is already added to phonebook`)
+      }      
 
     } else {
       let newPerson = {
