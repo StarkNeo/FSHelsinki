@@ -1,9 +1,13 @@
-const DisplayFeatures=({country})=>{
+import CountryInfo from "./CountryInfo";
+import WeatherInfo from "./WeatherInfo";
+
+const DisplayFeatures=({country,weather})=>{
     let flagStyle={
         width:250,
         height:200
     }
     console.log(country)
+    console.log(weather)
     let languages = []
     for (const key in country.languages) {
         languages.push(country.languages[key])
@@ -11,16 +15,11 @@ const DisplayFeatures=({country})=>{
     
 
     return(
-        <div>
-            <h1>{country.name.common}</h1>
-            <p>Capital {country.capital[0]}</p>
-            <p>Area {country.area}</p>
-            <h2>Languages</h2>
-            <ul>
-               {languages.map(lang=><li key={lang}>{lang}</li>)}
-            </ul>
-            <img src={country.flags.svg} alt="flag" style={flagStyle} />
-        </div>
+        <>
+        <CountryInfo country={country} />
+        <WeatherInfo weather={weather} capital={country.capital[0]} />
+        </>
+
     )
 }
 
