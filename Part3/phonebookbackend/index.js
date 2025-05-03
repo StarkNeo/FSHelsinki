@@ -62,3 +62,20 @@ app.delete("/api/persons/:id",(request,response)=>{
     persons = persons.filter(person=>person.id !== id);
     response.status(204).end();
 })
+
+app.post("/api/persons",(request, response)=>{
+    //let id = persons.length>0?Math.max(...persons.map(person=>Number(person.id))):0;
+    let id = Math.floor(Math.random()*1000000)
+    if(!request.body.name || !request.body.number){
+        return response.status(400).json({error:"missing information"})
+    }
+    let newPerson = {
+        id:String(id),
+        name:request.body.name,
+        number:request.body.number
+    }
+
+    persons = persons.concat(newPerson)
+    console.log(persons)
+    response.json(newPerson)
+})
