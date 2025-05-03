@@ -1,7 +1,8 @@
 const express=require('express');
 const app=express();
-
+const morgan = require('morgan');
 app.use(express.json());
+app.use(morgan('tiny'));
 
 let persons =[
     { 
@@ -29,8 +30,9 @@ let persons =[
 let infoPage =`<div> 
                 <p>Phonebook has info for ${persons.length} people</p> 
                 <p>${Date()}</p>
-                </div>`
-console.log(infoPage)
+                </div>`;
+
+
 let PORT = 3001;
 app.listen(PORT,()=>{
     console.log(`Server listening on port ${PORT}`)
@@ -83,3 +85,4 @@ app.post("/api/persons",(request, response)=>{
     console.log(persons)
     response.json(newPerson)
 })
+
