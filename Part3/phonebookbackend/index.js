@@ -65,9 +65,13 @@ app.delete("/api/persons/:id",(request,response)=>{
 
 app.post("/api/persons",(request, response)=>{
     //let id = persons.length>0?Math.max(...persons.map(person=>Number(person.id))):0;
-    let id = Math.floor(Math.random()*1000000)
+    let id = Math.floor(Math.random()*1000000);
+    let nameFound = persons.find(person=>person.name===request.body.name);
     if(!request.body.name || !request.body.number){
         return response.status(400).json({error:"missing information"})
+    }
+    else if(nameFound){
+        return response.status(400).json({error:"name must be unique"});
     }
     let newPerson = {
         id:String(id),
