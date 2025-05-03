@@ -47,3 +47,12 @@ app.get("/api/persons",(request, response)=>{
 app.get("/info",(request,response)=>{
     response.send(infoPage)
 })
+
+app.get("/api/persons/:id",(request, response)=>{
+    let id = request.params.id;
+    let personFound = persons.find(person=>person.id===id)
+    if(personFound){
+        console.log(personFound)
+        response.send(personFound)
+    } else response.status(404).end()
+})
