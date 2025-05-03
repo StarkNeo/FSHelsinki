@@ -56,3 +56,9 @@ app.get("/api/persons/:id",(request, response)=>{
         response.send(personFound)
     } else response.status(404).end()
 })
+
+app.delete("/api/persons/:id",(request,response)=>{
+    let id=request.params.id;
+    persons = persons.filter(person=>person.id !== id);
+    response.status(204).end();
+})
