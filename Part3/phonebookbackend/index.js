@@ -26,6 +26,11 @@ let persons =[
       }
 ]
 
+let infoPage =`<div> 
+                <p>Phonebook has info for ${persons.length} people</p> 
+                <p>${Date()}</p>
+                </div>`
+console.log(infoPage)
 let PORT = 3001;
 app.listen(PORT,()=>{
     console.log(`Server listening on port ${PORT}`)
@@ -37,4 +42,8 @@ app.get("/",(request, response)=>{
 
 app.get("/api/persons",(request, response)=>{
     response.send(persons)
+})
+
+app.get("/info",(request,response)=>{
+    response.send(infoPage)
 })
