@@ -1,6 +1,10 @@
 const express=require('express');
 const app=express();
 const morgan = require('morgan');
+const cors = require('cors');
+
+app.use(cors());
+
 app.use(express.json());
 //app.use(morgan('tiny'));
 
@@ -37,7 +41,7 @@ let infoPage =`<div>
                 </div>`;
 
 
-let PORT = 3001;
+let PORT = process.env.PORT || 3001;
 app.listen(PORT,()=>{
     console.log(`Server listening on port ${PORT}`)
 })
