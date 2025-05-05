@@ -17,7 +17,8 @@ const DisplayFeatures=({country,weather})=>{
     return(
         <>
         <CountryInfo country={country} />
-        <WeatherInfo weather={weather} capital={country.capital[0]} />
+        {weather?<WeatherInfo weather={weather} capital={country.capital[0]} />:""}
+        
         </>
 
     )

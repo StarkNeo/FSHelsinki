@@ -12,13 +12,14 @@ const App = () => {
 
   
   const cleanText = (text)=>{
-    let cleanedText = text.replace(/[^a-zA-Z0-9]/g,"");
+    let cleanedText = text.replace(/[^a-zA-Z0-9]/g," ");
     return cleanedText;
   }
 
   const getWeather = (city)=>{
     console.log(city)
     let cityValue=cleanText(city);
+    console.log(cityValue)
     const apiKey=import.meta.env.VITE_API_KEY;
     let url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${cityValue}`;
     axios.get(url)

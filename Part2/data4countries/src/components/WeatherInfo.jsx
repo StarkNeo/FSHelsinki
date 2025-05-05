@@ -1,5 +1,6 @@
 const WeatherInfo = ({weather,capital}) => {
-
+    console.log(weather)
+    console.log(capital)
     return (
         <div>
             <h2>Weather in {capital}</h2>
