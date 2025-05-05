@@ -1,0 +1,11 @@
+GET https://phonebookbackend-e20o.onrender.com/api/persons HTTP/1.1
+
+###
+POST https://phonebookbackend-e20o.onrender.com/api/persons HTTP/1.1
+Content-Type: application/json
+
+{
+    "name":"Angel Martinez",
+    "number":"1225449"
+}
+
