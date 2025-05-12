@@ -2,8 +2,10 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config();
 
+
 let url = process.env.MONGODB_URI;
 mongoose.set('strictQuery',false);
+
 mongoose.connect(url)
 .then(result=>{
     console.log('connected to MONGODB')
@@ -11,6 +13,8 @@ mongoose.connect(url)
 .catch(error=>{
     console.log("error connecting to MONGODB: ",error.message)
 })
+
+
 
 const contactSchema = new mongoose.Schema({
     name: String,
