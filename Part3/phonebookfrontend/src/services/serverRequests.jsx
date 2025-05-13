@@ -1,6 +1,6 @@
 import axios from "axios";
-let url = "http://localhost:3001/api/persons";
-
+//let url = "http://localhost:3001/api/persons";
+let url = "https://phonebookbackend-e20o.onrender.com"
 
 const getAll = () => {
     let request = axios.get(url)
