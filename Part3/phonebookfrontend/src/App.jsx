@@ -76,6 +76,7 @@ const App = () => {
         })
         .catch(error => {
           console.log(error)
+          setMessage(error.response.data.error)
         })
 
     }
