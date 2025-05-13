@@ -1,6 +1,6 @@
 import axios from "axios";
 //let url = "http://localhost:3001/api/persons";
-let url = "https://phonebookbackend-e20o.onrender.com"
+let url = "https://phonebookbackend-e20o.onrender.com/api/persons"
 
 const getAll = () => {
     let request = axios.get(url)
@@ -30,7 +30,7 @@ const update = (id, newObject) => {
 
 const remove =(id)=>{
     let request = axios.delete(`${url}/${id}`)
-    return request.then(response=>console.log(response.data))
+    return request.then(response=>response.data)
 }
 
 export default { getAll, create, update, remove, getPerson }
