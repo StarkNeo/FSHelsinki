@@ -5,8 +5,8 @@ POST http://localhost:3003/api/blogs HTTP/1.1
 Content-Type: application/json
 
 {
-    "title":"Postman suchs",
-    "author":"Jesus Hernandez",
+    "title":"Stand by me, no body knows the way is gonna be",
+    "author":"Oasis",
     "url":"http://miurl.net",
-    "likes":5000000000000
+    "likes":999999999999999999999
 }
