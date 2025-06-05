@@ -1,21 +1,37 @@
-const { test, describe, after } = require('node:test')
+const { test, describe, after, it } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const assert = require('node:assert')
 const listHelper = require('../utils/list_helper')
 
+
 const api = supertest(app)
 
-test('post are returned as json', async ()=>{
-  await api
-  .get('/api/blogs')
-  .expect(200)
-  .expect('Content-Type', /application\/json/)
+test('post are returned as json', async () => {
+  await api.get('/api/blogs')
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
 
 })
-after(async()=>{
-  await mongoose.connection.close()
+
+test("Blog post unique identifier should be named id", async () => {
+  const newNote = {
+    title: "supertest",
+    author: "Jesus",
+    url: "http://",
+    likes: 1000
+  }
+
+  // Send the new blog post with the request body
+  const response = await api
+    .post('/api/blogs')
+    .send(newNote)
+    .expect(201)  // check for successful creation
+    
+    console.log(response.body)
+    console.log(response.body.hasOwnProperty("id"))
+    assert(response.body.hasOwnProperty("id"))
 })
 
 test('dummy returns one', () => {
@@ -101,7 +117,7 @@ describe('maximum likes, return the object with maximum likes among the others',
 
 })
 
-test('returns the author who has the largest amount of blogs',()=>{
+test('returns the author who has the largest amount of blogs', () => {
   let blogs = [
     {
       _id: "5a422a851b54a676234d17f7",
@@ -150,13 +166,13 @@ test('returns the author who has the largest amount of blogs',()=>{
       url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
       likes: 2,
       __v: 0
-    }  
+    }
   ]
   let result = listHelper.mostBlogs(blogs)
-  assert.deepStrictEqual(result,{author:'Robert C. Martin',blogs:3})
+  assert.deepStrictEqual(result, { author: 'Robert C. Martin', blogs: 3 })
 })
 
-test('return the author who has the most likes in his blog',()=>{
+test('return the author who has the most likes in his blog', () => {
   let blogs = [
     {
       _id: "5a422a851b54a676234d17f7",
@@ -205,8 +221,8 @@ test('return the author who has the most likes in his blog',()=>{
       url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
       likes: 2,
       __v: 0
-    }  
+    }
   ]
   let result = listHelper.mostLikes(blogs)
-  assert.deepStrictEqual(result,{ author: 'Edsger W. Dijkstra', blogs: 17 })
+  assert.deepStrictEqual(result, { author: 'Edsger W. Dijkstra', blogs: 17 })
 })
