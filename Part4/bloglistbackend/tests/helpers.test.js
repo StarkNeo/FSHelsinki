@@ -1,7 +1,22 @@
-const { test, describe } = require('node:test')
+const { test, describe, after } = require('node:test')
+const mongoose = require('mongoose')
+const supertest = require('supertest')
+const app = require('../app')
 const assert = require('node:assert')
 const listHelper = require('../utils/list_helper')
 
+const api = supertest(app)
+
+test('post are returned as json', async ()=>{
+  await api
+  .get('/api/blogs')
+  .expect(200)
+  .expect('Content-Type', /application\/json/)
+
+})
+after(async()=>{
+  await mongoose.connection.close()
+})
 
 test('dummy returns one', () => {
   let blogs = []
