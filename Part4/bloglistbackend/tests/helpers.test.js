@@ -28,10 +28,37 @@ test("Blog post unique identifier should be named id", async () => {
     .post('/api/blogs')
     .send(newNote)
     .expect(201)  // check for successful creation
-    
-    console.log(response.body)
-    console.log(response.body.hasOwnProperty("id"))
-    assert(response.body.hasOwnProperty("id"))
+
+  console.log(response.body)
+  console.log(response.body.hasOwnProperty("id"))
+  assert(response.body.hasOwnProperty("id"))
+})
+
+test("verifies that making an HTTP POST request to the /api/blogs URL successfully creates a new blog post", async () => {
+  const newNote = {
+    title: "supertest again",
+    author: "Jesus Hdz",
+    url: "http://",
+    likes: 1001
+  }
+  let elementsBefore = await api
+    .get("/api/blogs")
+    .expect(200)
+
+  console.log("#Elements before posting: ",elementsBefore.body.length)
+  
+  let postElement = await api
+    .post("/api/blogs")
+    .send(newNote)
+    .expect(201)
+  
+  let elementsAfter = await api
+  .get("/api/blogs")
+  .expect(200)
+
+  console.log("#Elements after posting: ", elementsAfter.body.length)
+  console.log("Elemento posteado: ", postElement.body)
+  assert.equal(elementsAfter.body.length-elementsBefore.body.length,1)
 })
 
 test('dummy returns one', () => {
