@@ -67,6 +67,21 @@ test('dummy returns one', () => {
   assert.strictEqual(result, 1)
 })
 
+test("verifies that if the likes property is missing from the request, it will default to the value 0",async ()=>{
+  const newNote = {
+    title: "supertest again",
+    author: "Jesus Hdz",
+    url: "http://",
+  }
+  // Send the new blog post with the request body
+  const response = await api
+    .post('/api/blogs')
+    .send(newNote)
+    .expect(201)  // check for successful creation
+
+  console.log(response.body)
+  assert.equal(response.body.likes,0)
+})
 
 describe('total likes', () => {
 
