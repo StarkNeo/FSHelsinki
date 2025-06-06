@@ -83,6 +83,22 @@ test("verifies that if the likes property is missing from the request, it will d
   assert.equal(response.body.likes,0)
 })
 
+test("verify that if the title or url properties are missing from the request data",async ()=>{
+  let newNote = {
+    //title: "supertest again",
+    author: "Jesus Hdz",
+    url: "http://",
+  }
+  // Send the new blog post with the request body
+  let response = await api
+    .post('/api/blogs')
+    .send(newNote)
+    .expect(400)  // check for fail request 
+
+  console.log(response.body, response.status)
+})
+
+
 describe('total likes', () => {
 
 
