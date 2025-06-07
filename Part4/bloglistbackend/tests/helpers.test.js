@@ -102,15 +102,6 @@ describe("Viewing a specific note", () => {
 
 })
 
-
-
-
-
-
-
-
-
-
 describe('total likes', () => {
   test('when list has only one blog, equals the likes of 7', () => {
     let blogs = [
@@ -187,7 +178,6 @@ describe('maximum likes, return the object with maximum likes among the others',
 describe ("Deletion of a note",()=>{
   test("succeds with status code 204 if id is valid",async()=>{
     const blogsAtStart =  await helper.getAllElements()
-    
     const blogToDelete =  blogsAtStart[0]
     console.log("blog to delete id: ",blogToDelete)
 
@@ -202,6 +192,26 @@ describe ("Deletion of a note",()=>{
   })
 })
 
+describe ("updating the information of an individual blog post",()=>{
+  test("updating likes of a blog post",async()=>{
+    const blogs = await helper.getAllElements()
+    const likesBeforeUpdate = blogs[0].likes
+    
+    console.log("likes = ",likesBeforeUpdate)
+    blogs[0].likes += 1
+    console.log("ID = ",blogs[0].id)
+
+    await api.put(`/api/blogs/${blogs[0].id}`)
+    .send(blogs[0].toJSON())
+    .expect(201)
+
+    const likesAfterUpdate = await helper.getAllElements()
+
+    assert.equal(likesAfterUpdate[0].likes-likesBeforeUpdate,1)
+    
+
+  })
+})
 test('dummy returns one', () => {
   let blogs = []
   const result = listHelper.dummy(blogs)

@@ -37,7 +37,7 @@ postsRouter.post('/', (request, response, next) => {
     .catch(error => next(error))
 })
 
-postsRouter.delete('/:id',async (request, response)=>{
+postsRouter.delete('/:id',async (request, response, next)=>{
   const id = request.params.id
   
   try {
@@ -46,6 +46,26 @@ postsRouter.delete('/:id',async (request, response)=>{
     } catch (error) {
       next(error)
     }
+
+})
+
+postsRouter.put('/:id',async (request, response, next)=>{
+  const {likes} = request.body
+  console.log("likes in controller: ",likes)
+  try {
+    const post = await Blog.findById(request.params.id)
+    console.log(post)
+    if(!post){
+      return response.status(404).end()
+    }
+    post.likes = likes
+    
+    let updatedNote = await post.save()
+    response.status(201).json(updatedNote)
+     
+  } catch (error) {
+    next(error)
+  }
 
 })
 
