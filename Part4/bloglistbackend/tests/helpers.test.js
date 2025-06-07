@@ -1,107 +1,117 @@
-const { test, describe, after, it } = require('node:test')
+const assert = require('node:assert')
+const { test, describe, after, beforeEach } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
-const assert = require('node:assert')
+const helper = require('../tests/test_helper')
 const listHelper = require('../utils/list_helper')
-
+const Blog = require('../models/note')
 
 const api = supertest(app)
 
-test('post are returned as json', async () => {
-  await api.get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
+describe('when there is initially some notes saved', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+    await Blog.insertMany(helper.initialNotes)
+  })
+
+  test('post are returned as json', async () => {
+    await api.get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
+})
+
+describe('Addition of a new note', () => {
+  test("Blog post unique identifier should be named id", async () => {
+    const newNote = {
+      title: "supertest",
+      author: "Jesus",
+      url: "http://",
+      likes: 1000
+    }
+
+    // Send the new blog post with the request body
+    const response = await api
+      .post('/api/blogs')
+      .send(newNote)
+      .expect(201)  // check for successful creation
+
+    //console.log(response.body)
+    //console.log(response.body.hasOwnProperty("id"))
+    //assert(response.body.hasOwnProperty("id"))
+    assert(helper.validateNoteProperty(response, "id"))
+  })
+
+  test("verifies that making an HTTP POST request to the /api/blogs URL successfully creates a new blog post", async () => {
+    const newNote = {
+      title: "supertest again",
+      author: "Jesus Hdz",
+      url: "http://",
+      likes: 1001
+    }
+    let elementsBefore = await helper.getAllElements()
+
+    console.log("#Elements before posting: ", elementsBefore.length)
+
+    let postElement = await api
+      .post("/api/blogs")
+      .send(newNote)
+      .expect(201)
+
+    let elementsAfter = await helper.getAllElements()
+
+    console.log("#Elements after posting: ", elementsAfter.length)
+    console.log("Elemento posteado: ", postElement.body)
+    assert.equal(elementsAfter.length - elementsBefore.length, 1)
+  })
 
 })
 
-test("Blog post unique identifier should be named id", async () => {
-  const newNote = {
-    title: "supertest",
-    author: "Jesus",
-    url: "http://",
-    likes: 1000
-  }
+describe("Viewing a specific note", () => {
+  test("verifies that if the likes property is missing from the request, it will default to the value 0", async () => {
+    const newNote = {
+      title: "supertest again",
+      author: "Jesus Hdz",
+      url: "http://",
+    }
+    // Send the new blog post with the request body
+    const response = await api
+      .post('/api/blogs')
+      .send(newNote)
+      .expect(201)  // check for successful creation
 
-  // Send the new blog post with the request body
-  const response = await api
-    .post('/api/blogs')
-    .send(newNote)
-    .expect(201)  // check for successful creation
+    console.log(response.body)
+    assert.equal(response.body.likes, 0)
+  })
 
-  console.log(response.body)
-  console.log(response.body.hasOwnProperty("id"))
-  assert(response.body.hasOwnProperty("id"))
+  test("verify that if the title or url properties are missing from the request data", async () => {
+    let newNote = {
+      //title: "supertest again",
+      author: "Jesus Hdz",
+      url: "http://",
+    }
+    // Send the new blog post with the request body
+    let response = await api
+      .post('/api/blogs')
+      .send(newNote)
+      .expect(400)  // check for fail request 
+
+    console.log(response.body, response.status)
+  })
+
 })
 
-test("verifies that making an HTTP POST request to the /api/blogs URL successfully creates a new blog post", async () => {
-  const newNote = {
-    title: "supertest again",
-    author: "Jesus Hdz",
-    url: "http://",
-    likes: 1001
-  }
-  let elementsBefore = await api
-    .get("/api/blogs")
-    .expect(200)
 
-  console.log("#Elements before posting: ",elementsBefore.body.length)
-  
-  let postElement = await api
-    .post("/api/blogs")
-    .send(newNote)
-    .expect(201)
-  
-  let elementsAfter = await api
-  .get("/api/blogs")
-  .expect(200)
 
-  console.log("#Elements after posting: ", elementsAfter.body.length)
-  console.log("Elemento posteado: ", postElement.body)
-  assert.equal(elementsAfter.body.length-elementsBefore.body.length,1)
-})
 
-test('dummy returns one', () => {
-  let blogs = []
-  const result = listHelper.dummy(blogs)
-  assert.strictEqual(result, 1)
-})
 
-test("verifies that if the likes property is missing from the request, it will default to the value 0",async ()=>{
-  const newNote = {
-    title: "supertest again",
-    author: "Jesus Hdz",
-    url: "http://",
-  }
-  // Send the new blog post with the request body
-  const response = await api
-    .post('/api/blogs')
-    .send(newNote)
-    .expect(201)  // check for successful creation
 
-  console.log(response.body)
-  assert.equal(response.body.likes,0)
-})
 
-test("verify that if the title or url properties are missing from the request data",async ()=>{
-  let newNote = {
-    //title: "supertest again",
-    author: "Jesus Hdz",
-    url: "http://",
-  }
-  // Send the new blog post with the request body
-  let response = await api
-    .post('/api/blogs')
-    .send(newNote)
-    .expect(400)  // check for fail request 
 
-  console.log(response.body, response.status)
-})
 
 
 describe('total likes', () => {
-
-
   test('when list has only one blog, equals the likes of 7', () => {
     let blogs = [
       {
@@ -116,7 +126,6 @@ describe('total likes', () => {
     const result = listHelper.sumLikes(blogs)
     assert.strictEqual(result, 7)
   })
-
 
   test('when list has two objects, each has 7 and 5 likes respectively, equals likes return 12', () => {
     let blogs = [
@@ -174,6 +183,31 @@ describe('maximum likes, return the object with maximum likes among the others',
   })
 
 })
+
+describe ("Deletion of a note",()=>{
+  test("succeds with status code 204 if id is valid",async()=>{
+    const blogsAtStart =  await helper.getAllElements()
+    
+    const blogToDelete =  blogsAtStart[0]
+    console.log("blog to delete id: ",blogToDelete)
+
+    await api.delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+
+    const blogsAtEnd =  await helper.getAllElements()
+    const titles = blogsAtEnd.map(blog=>blog.title)
+    assert(!titles.includes(blogToDelete.title))
+    assert.equal(blogsAtEnd.length, blogsAtStart.length-1)
+
+  })
+})
+
+test('dummy returns one', () => {
+  let blogs = []
+  const result = listHelper.dummy(blogs)
+  assert.strictEqual(result, 1)
+})
+
 
 test('returns the author who has the largest amount of blogs', () => {
   let blogs = [
@@ -283,4 +317,8 @@ test('return the author who has the most likes in his blog', () => {
   ]
   let result = listHelper.mostLikes(blogs)
   assert.deepStrictEqual(result, { author: 'Edsger W. Dijkstra', blogs: 17 })
+}) 
+
+after(async () => {
+  await mongoose.connection.close()
 })

@@ -1,7 +1,7 @@
 const postsRouter = require('express').Router()
 const Blog = require('../models/note')
 
-postsRouter.get('/', (request, response) => {
+postsRouter.get('/',(request, response) => {
   Blog.find({})
     .then(posts => {
       response.json(posts)
@@ -35,6 +35,18 @@ postsRouter.post('/', (request, response, next) => {
       response.status(201).json(savedPost)
     })
     .catch(error => next(error))
+})
+
+postsRouter.delete('/:id',async (request, response)=>{
+  const id = request.params.id
+  
+  try {
+      await Blog.findByIdAndDelete(id)
+      response.status(204).end()
+    } catch (error) {
+      next(error)
+    }
+
 })
 
 module.exports = postsRouter
