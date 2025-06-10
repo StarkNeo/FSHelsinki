@@ -6,7 +6,8 @@ const { info, error } = require('../utils/logger')
 
 usersRouter.get('/', async (request, response, next) => {
   try {
-    const users = await User.find({}).select('username name id ')
+    //const users = await User.find({}).select('username name id ')
+    const users = await User.find({}).select('username name id posts').populate('posts',{title:1, author:1, url:1, id:1})
     response.status(200).json(users)
 
   } catch (error) {
