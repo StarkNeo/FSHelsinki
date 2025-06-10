@@ -1,6 +1,16 @@
 const postsRouter = require('express').Router()
 const Blog = require('../models/note')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
+
+
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
+  }
+  return null
+}
 
 postsRouter.get('/', async (request, response, next) => {
   try {
@@ -25,27 +35,40 @@ postsRouter.get('/:id', (request, response, next) => {
     .catch(error => logger.error(error))
 })
 
+
+
 postsRouter.post('/', async (request, response, next) => {
   const body = request.body
-  const user = await User.findById(body.userId)
-  if (!user) {
-    return response.status(400).json({ error: 'userId missing or not valid' })
-  }
-  const post = new Blog({
-    title: body.title,
-    author: body.author,
-    url: body.url,
-    likes: body.likes,
-    user: user._id
-  })
   try {
-    const savedNote = await post.save()
-    user.posts = user.posts.concat(savedNote._id)
-    await user.save()
-    response.status(201).json(savedNote)
+    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token invalid' })
+    }
+    const user = await User.findById(decodedToken.id)
+    if (!user) {
+      return response.status(400).json({ error: 'userId missing or not valid' })
+    }
+    const post = new Blog({
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes,
+      user: user._id
+    })
+    try {
+      const savedNote = await post.save()
+      user.posts = user.posts.concat(savedNote._id)
+      await user.save()
+      response.status(201).json(savedNote)
+    } catch (error) {
+      next(error)
+    }
   } catch (error) {
     next(error)
   }
+
+
+
 
 })
 

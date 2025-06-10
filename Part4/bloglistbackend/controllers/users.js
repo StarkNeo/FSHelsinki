@@ -31,7 +31,7 @@ usersRouter.post('/', async (request, response, next) => {
   try {
     const savedUser = await user.save()
     info("Esto contesto mongo: ", savedUser)
-    response.status(201).json(savedUser)
+    response.status(201).json({message:"User created",username:savedUser.username})
   } catch (error) {
     next(error)
   }
