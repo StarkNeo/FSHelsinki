@@ -1,5 +1,6 @@
 const { post } = require('../app')
 const Blog = require('../models/note')
+const User = require('../models/user')
 console.log(Blog)
 const initialNotes = [
     {
@@ -29,6 +30,18 @@ const getAllElements = async () => {
     return posts
 }
 
+const initialUsers=[
+    {
+        username:"admin",
+        name:"Stark",
+        password:"avenger"
+    }
+]
 
+const getAllUsers = async()=>{
+    const users = await User.find({})
+    console.log(users)
+    return users
+}
 
-module.exports = { initialNotes, validateNoteProperty, getAllElements }
+module.exports = { initialNotes, validateNoteProperty, getAllElements,initialUsers,getAllUsers }

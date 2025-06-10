@@ -17,21 +17,26 @@ usersRouter.get('/', async (request, response, next) => {
 
 usersRouter.post('/', async (request, response, next) => {
   const { username, name, password } = request.body
-  try {
-    const passwordHash = await bcrypt.hash(password, 10)
-    const user = new User(
-      {
-        username,
-        name,
-        passwordHash
-      }
-    )
-    const savedUser = await user.save()
-    response.status(201).json(savedUser)
+  info("esto recibidio", request.body)
 
+  const passwordHash = await bcrypt.hash(password, 10)
+  const user = new User(
+    {
+      username,
+      name,
+      passwordHash
+    }
+  )
+  try {
+    const savedUser = await user.save()
+    info("Esto contesto mongo: ", savedUser)
+    response.status(201).json(savedUser)
   } catch (error) {
     next(error)
   }
+
+
+
 
 })
 

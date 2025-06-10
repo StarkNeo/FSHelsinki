@@ -6,6 +6,8 @@ const app = require('../app')
 const helper = require('../tests/test_helper')
 const listHelper = require('../utils/list_helper')
 const Blog = require('../models/note')
+const bcrypt = require('bcrypt')
+const User = require('../models/user')
 
 const api = supertest(app)
 
@@ -175,40 +177,40 @@ describe('maximum likes, return the object with maximum likes among the others',
 
 })
 
-describe ("Deletion of a note",()=>{
-  test("succeds with status code 204 if id is valid",async()=>{
-    const blogsAtStart =  await helper.getAllElements()
-    const blogToDelete =  blogsAtStart[0]
-    console.log("blog to delete id: ",blogToDelete)
+describe("Deletion of a note", () => {
+  test("succeds with status code 204 if id is valid", async () => {
+    const blogsAtStart = await helper.getAllElements()
+    const blogToDelete = blogsAtStart[0]
+    console.log("blog to delete id: ", blogToDelete)
 
     await api.delete(`/api/blogs/${blogToDelete.id}`)
-    .expect(204)
+      .expect(204)
 
-    const blogsAtEnd =  await helper.getAllElements()
-    const titles = blogsAtEnd.map(blog=>blog.title)
+    const blogsAtEnd = await helper.getAllElements()
+    const titles = blogsAtEnd.map(blog => blog.title)
     assert(!titles.includes(blogToDelete.title))
-    assert.equal(blogsAtEnd.length, blogsAtStart.length-1)
+    assert.equal(blogsAtEnd.length, blogsAtStart.length - 1)
 
   })
 })
 
-describe ("updating the information of an individual blog post",()=>{
-  test("updating likes of a blog post",async()=>{
+describe("updating the information of an individual blog post", () => {
+  test("updating likes of a blog post", async () => {
     const blogs = await helper.getAllElements()
     const likesBeforeUpdate = blogs[0].likes
-    
-    console.log("likes = ",likesBeforeUpdate)
+
+    console.log("likes = ", likesBeforeUpdate)
     blogs[0].likes += 1
-    console.log("ID = ",blogs[0].id)
+    console.log("ID = ", blogs[0].id)
 
     await api.put(`/api/blogs/${blogs[0].id}`)
-    .send(blogs[0].toJSON())
-    .expect(201)
+      .send(blogs[0].toJSON())
+      .expect(201)
 
     const likesAfterUpdate = await helper.getAllElements()
 
-    assert.equal(likesAfterUpdate[0].likes-likesBeforeUpdate,1)
-    
+    assert.equal(likesAfterUpdate[0].likes - likesBeforeUpdate, 1)
+
 
   })
 })
@@ -327,7 +329,59 @@ test('return the author who has the most likes in his blog', () => {
   ]
   let result = listHelper.mostLikes(blogs)
   assert.deepStrictEqual(result, { author: 'Edsger W. Dijkstra', blogs: 17 })
-}) 
+})
+
+describe('crud operations on users collection, initialize two users', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+    const user = helper.initialUsers[0]
+    let passwordHash = await bcrypt.hash(user.password, 10)
+    const newUser = new User({
+      username: user.username,
+      name: user.name,
+      passwordHash: passwordHash,
+    })
+    await newUser.save()
+  });
+  test('creation succeeds with a fresh username', async () => {
+    const usersAtStart = await helper.getAllUsers()
+    console.log("estos son los usuarios al inicio: ", usersAtStart.length)
+    const newUser = {
+      username: "Neo",
+      name: "Thomas Anderson",
+      password: 'whiterabbit123'
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.getAllUsers()
+    console.log("usuarios final: ", (Number(usersAtEnd.length) - Number(usersAtStart.length)))
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
+    const usernames = usersAtEnd.map(u => u.name)
+    assert(usernames.includes(newUser.name))
+
+  })
+  
+})
+test('creation failed with a duplicate username',async()=>{
+    const newUser = {
+      username:"Neo",
+      name:"Thomas J Henry",
+      password:"whitelawyer"
+    }
+    const result = await api
+    .post('/api/users')
+    .send(newUser)
+    .expect(400)
+    .expect('Content-Type',/application\/json/)
+    
+    assert(result.body.error.includes('expected `username` to be unique'))
+  })
+
 
 after(async () => {
   await mongoose.connection.close()
