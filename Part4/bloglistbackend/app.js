@@ -23,6 +23,7 @@ mongoose
 app.use(express.static('dist'))
 app.use(express.json())
 app.use(middlewares.requestLogger)
+app.use(middlewares.tokenExtractor)
 app.use('/api/blogs',postsRouter)
 app.use('/api/users',usersRouter)
 app.use('/api/login',loginRouter)

@@ -3,14 +3,14 @@ const Blog = require('../models/note')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 
-
+/*
 const getTokenFrom = request => {
   const authorization = request.get('authorization')
   if (authorization && authorization.startsWith('Bearer ')) {
     return authorization.replace('Bearer ', '')
   }
   return null
-}
+}*/
 
 postsRouter.get('/', async (request, response, next) => {
   try {
@@ -39,8 +39,10 @@ postsRouter.get('/:id', (request, response, next) => {
 
 postsRouter.post('/', async (request, response, next) => {
   const body = request.body
+  console.log(body)
   try {
-    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+    //const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
     if (!decodedToken.id) {
       return response.status(401).json({ error: 'token invalid' })
     }
