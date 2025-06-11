@@ -76,13 +76,38 @@ postsRouter.post('/', async (request, response, next) => {
 
 postsRouter.delete('/:id', async (request, response, next) => {
   const id = request.params.id
-
   try {
-    await Blog.findByIdAndDelete(id)
-    response.status(204).end()
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token invalid' })
+    }
+    //const user = await User.findById(decodedToken.id)
+    const blog = await Blog.findById(id)
+
+
+    if (!blog) {
+      return response.status(400).json({ error: 'post id does not exist' })
+    }
+
+    if (blog.user.toString() === decodedToken.id.toString()) {
+      try {
+        await Blog.findByIdAndDelete(id)
+        const user = await User.findById(decodedToken.id)
+        console.log(user)
+        user.posts = user.posts.filter(p => p.toString() !== blog._id.toString())
+        await user.save()
+        response.status(204).end()
+      } catch (error) {
+        next(error)
+      }
+    }
+    return response.status(400).json({ error: 'Post id does not match user id' })
   } catch (error) {
     next(error)
   }
+
+
+
 
 })
 
