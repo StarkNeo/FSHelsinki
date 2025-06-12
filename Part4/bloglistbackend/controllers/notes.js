@@ -2,6 +2,7 @@ const postsRouter = require('express').Router()
 const Blog = require('../models/note')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
+const { userExtractor } = require('../utils/middleware')
 
 /*
 const getTokenFrom = request => {
@@ -15,7 +16,7 @@ const getTokenFrom = request => {
 postsRouter.get('/', async (request, response, next) => {
   try {
     const posts = await Blog.find({}).populate('user', { username: 1, name: 1, id: 1 })
-    response.status(200).json(posts)
+    return response.status(200).json(posts)
   } catch (error) {
     next(error)
   }
@@ -37,16 +38,17 @@ postsRouter.get('/:id', (request, response, next) => {
 
 
 
-postsRouter.post('/', async (request, response, next) => {
+postsRouter.post('/',userExtractor,async (request, response, next) => {
   const body = request.body
-  console.log(body)
+  const userId = request.user
   try {
     //const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if (!decodedToken.id) {
+    //const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (!userId) {
       return response.status(401).json({ error: 'token invalid' })
     }
-    const user = await User.findById(decodedToken.id)
+    //const user = await User.findById(decodedToken.id)
+    const user = await User.findById(userId)
     if (!user) {
       return response.status(400).json({ error: 'userId missing or not valid' })
     }
@@ -74,11 +76,12 @@ postsRouter.post('/', async (request, response, next) => {
 
 })
 
-postsRouter.delete('/:id', async (request, response, next) => {
+postsRouter.delete('/:id',userExtractor,async (request, response, next) => {
   const id = request.params.id
+  const userId = request.user
   try {
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if (!decodedToken.id) {
+    //const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (!userId) {
       return response.status(401).json({ error: 'token invalid' })
     }
     //const user = await User.findById(decodedToken.id)
@@ -89,14 +92,14 @@ postsRouter.delete('/:id', async (request, response, next) => {
       return response.status(400).json({ error: 'post id does not exist' })
     }
 
-    if (blog.user.toString() === decodedToken.id.toString()) {
+    if (blog.user.toString() === userId.toString()) {
       try {
         await Blog.findByIdAndDelete(id)
-        const user = await User.findById(decodedToken.id)
-        console.log(user)
+        const user = await User.findById(userId)
         user.posts = user.posts.filter(p => p.toString() !== blog._id.toString())
         await user.save()
-        response.status(204).end()
+        return response.status(204).end()
+        
       } catch (error) {
         next(error)
       }

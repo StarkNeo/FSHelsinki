@@ -1,4 +1,5 @@
 const logger = require('./logger')
+const jwt = require('jsonwebtoken')
 
 const requestLogger = (request, response, next) => {
   logger.info('Method:', request.method)
@@ -8,19 +9,6 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
-const tokenExtractor = (request, response, next) => {
-  const authorization = request.get('authorization')
-  try {
-  if (authorization && authorization.startsWith('Bearer ')) {
-    request.token = authorization.replace('Bearer ', '')
-    next() 
-  }  
-  } catch (error) {
-    //response.status(400).json({ error: 'Invalid or missing token' })
-    next(error)
-  }
-  
-}
 
 
 const unknownEndpoint = (request, response) => {
@@ -43,9 +31,44 @@ const errorHandler = (error, request, response, next) => {
   next(error)
 }
 
+const tokenExtractor = (request, response, next) => {
+  if(request.method === 'GET') next()
+  const authorization = request.get('authorization')
+  console.log(request.method)
+  
+  try {
+  if (authorization && authorization.startsWith('Bearer ')) {
+    request.token = authorization.replace('Bearer ', '')
+    next() 
+  }  
+  } catch (error) {
+    //response.status(400).json({ error: 'Invalid or missing token' })
+    next(error)
+  }
+  
+}
+
+const userExtractor = (request, response, next)=>{
+  if(request.method === 'GET') next()
+  const authorization = request.get('authorization')
+  try {
+    if(authorization && authorization.startsWith('Bearer ')){
+      const token = authorization.replace('Bearer ','')
+      const tokenDecoded = jwt.verify(token,process.env.SECRET)
+      const user = tokenDecoded.id
+      request.user = user
+      next()
+    }
+  } catch (error) {
+    next(error)
+  }
+}
+
+
 module.exports = {
   requestLogger,
   unknownEndpoint,
   errorHandler,
-  tokenExtractor
+  tokenExtractor,
+  userExtractor
 }
