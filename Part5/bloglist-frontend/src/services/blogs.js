@@ -15,7 +15,7 @@ const createNote = async newObject=>{
   const config ={
     headers:{authorization:token}
   }
-
+  console.log("object on front",newObject)
   const response = await axios.post(baseUrl,newObject,config)
   return response.data
 }

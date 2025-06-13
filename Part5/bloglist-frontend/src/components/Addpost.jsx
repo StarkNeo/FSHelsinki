@@ -1,28 +1,24 @@
 import { useState, useEffect } from "react"
+import blogService from "../services/blogs"
 
-const Addpost = () => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+const Addpost = ({handleSubmit, handleChangeTitle, handleChangeAuthor, handleChangeUrl, title, author,url}) => {
+ 
 
-  const handleSubmit =(event)=>{
-    event.preventdefault()
-    console.log(event)
-  }
+
 
   return (
     <form onSubmit={handleSubmit}>
       <div>
         title:
-        <input type="text" name="title" value={title} onChange={({ target }) => setTitle(target.value)} />
+        <input type="text" name="title" value={title} onChange={handleChangeTitle} />
       </div>
       <div>
         author:
-        <input type="text" name="author" value={author} onChange={({ target }) => setAuthor(target.value)} />
+        <input type="text" name="author" value={author} onChange={handleChangeAuthor} />
       </div>
       <div>
         url:
-        <input type="text" name="url" value={url} onChange={({ target }) => setUrl(target.value)} />
+        <input type="text" name="url" value={url} onChange={handleChangeUrl} />
       </div>
       <button type="submit">create</button>
     </form>

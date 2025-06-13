@@ -40,6 +40,7 @@ postsRouter.get('/:id', (request, response, next) => {
 
 postsRouter.post('/',tokenExtractor,userExtractor,async (request, response, next) => {
   const body = request.body
+  console.log(body)
   const userId = request.user
   try {
     //const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
