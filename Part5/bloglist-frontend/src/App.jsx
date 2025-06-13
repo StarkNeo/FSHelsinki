@@ -4,10 +4,12 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Addpost from './components/Addpost'
 import { Login } from './components/Login'
+import Notification from './components/Notification'
+import './App.css'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [message, setMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -42,9 +44,9 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage("Wrong credentials")
+      setMessage("Wrong username or password")
       setTimeout(() => {
-        setErrorMessage(null)
+        setMessage(null)
       }, 5000)
     }
 
@@ -58,15 +60,15 @@ const App = () => {
     setPassword(event.target.value)
   }
 
-  const handleChangeTitle=(event)=>{
+  const handleChangeTitle = (event) => {
     setTitle(event.target.value)
   }
 
-  const handleChangeAuthor=(event)=>{
+  const handleChangeAuthor = (event) => {
     setAuthor(event.target.value)
   }
 
-  const handleChangeUrl=(event)=>{
+  const handleChangeUrl = (event) => {
     setUrl(event.target.value)
   }
 
@@ -80,7 +82,7 @@ const App = () => {
     console.log(event)
     const newPost = {
       title: title,
-      author:author,
+      author: author,
       url: url
     }
     blogService.createNote(newPost)
@@ -89,15 +91,21 @@ const App = () => {
         console.log(response)
 
         setBlogs(newBlogs)
+        setMessage(`a new blog ${response.title} by ${response.author} added`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
       }
       )
     setTitle('')
+    setAuthor('')
+    setUrl('')
   }
 
 
   return (
     <div>
-      {errorMessage}
+      <Notification message={message} />
       {user === null ? <Login
         handleLogin={handleLogin}
         username={username}
@@ -110,14 +118,14 @@ const App = () => {
           <input type="button" value="logout" onClick={handleLogout} />
           <div>
             <h2>create new</h2>
-            <Addpost 
-            handleSubmit={handleCreatePost}
-            handleChangeTitle={handleChangeTitle}
-            handleChangeAuthor={handleChangeAuthor}
-            handleChangeUrl={handleChangeUrl}
-            title={title}
-            author={author}
-            url ={url} />
+            <Addpost
+              handleSubmit={handleCreatePost}
+              handleChangeTitle={handleChangeTitle}
+              handleChangeAuthor={handleChangeAuthor}
+              handleChangeUrl={handleChangeUrl}
+              title={title}
+              author={author}
+              url={url} />
           </div>
           <h2>blogs</h2>
           {blogs.map(blog =>
