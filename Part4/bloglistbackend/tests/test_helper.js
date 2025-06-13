@@ -8,6 +8,7 @@ const initialNotes = [
         author: "Jesus Hernandez",
         url: "https://reacturl.com",
         likes: 500000000000000
+        
     },
     {
         title: "Postman Sucks",

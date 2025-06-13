@@ -11,6 +11,58 @@ const User = require('../models/user')
 
 const api = supertest(app)
 
+describe('crud operations on users collection, initialize two users', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+    const user = helper.initialUsers[0]
+    let passwordHash = await bcrypt.hash(user.password, 10)
+    const newUser = new User({
+      username: user.username,
+      name: user.name,
+      passwordHash: passwordHash,
+    })
+    await newUser.save()
+  });
+  test('creation succeeds with a fresh username', async () => {
+    const usersAtStart = await helper.getAllUsers()
+    console.log("estos son los usuarios al inicio: ", usersAtStart.length)
+    const newUser = {
+      username: "Neo",
+      name: "Thomas Anderson",
+      password: 'whiterabbit123'
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.getAllUsers()
+    console.log("usuarios final: ", (Number(usersAtEnd.length) - Number(usersAtStart.length)))
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
+    const usernames = usersAtEnd.map(u => u.name)
+    assert(usernames.includes(newUser.name))
+
+  })
+  
+})
+test('creation failed with a duplicate username',async()=>{
+    const newUser = {
+      username:"Neo",
+      name:"Thomas J Henry",
+      password:"whitelawyer"
+    }
+    const result = await api
+    .post('/api/users')
+    .send(newUser)
+    .expect(400)
+    .expect('Content-Type',/application\/json/)
+    
+    assert(result.body.error.includes('expected `username` to be unique'))
+  })
+
+
 describe('when there is initially some notes saved', () => {
   beforeEach(async () => {
     await Blog.deleteMany({})
@@ -331,56 +383,6 @@ test('return the author who has the most likes in his blog', () => {
   assert.deepStrictEqual(result, { author: 'Edsger W. Dijkstra', blogs: 17 })
 })
 
-describe('crud operations on users collection, initialize two users', () => {
-  beforeEach(async () => {
-    await User.deleteMany({})
-    const user = helper.initialUsers[0]
-    let passwordHash = await bcrypt.hash(user.password, 10)
-    const newUser = new User({
-      username: user.username,
-      name: user.name,
-      passwordHash: passwordHash,
-    })
-    await newUser.save()
-  });
-  test('creation succeeds with a fresh username', async () => {
-    const usersAtStart = await helper.getAllUsers()
-    console.log("estos son los usuarios al inicio: ", usersAtStart.length)
-    const newUser = {
-      username: "Neo",
-      name: "Thomas Anderson",
-      password: 'whiterabbit123'
-    }
-
-    await api
-      .post('/api/users')
-      .send(newUser)
-      .expect(201)
-      .expect('Content-Type', /application\/json/)
-
-    const usersAtEnd = await helper.getAllUsers()
-    console.log("usuarios final: ", (Number(usersAtEnd.length) - Number(usersAtStart.length)))
-    assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
-    const usernames = usersAtEnd.map(u => u.name)
-    assert(usernames.includes(newUser.name))
-
-  })
-  
-})
-test('creation failed with a duplicate username',async()=>{
-    const newUser = {
-      username:"Neo",
-      name:"Thomas J Henry",
-      password:"whitelawyer"
-    }
-    const result = await api
-    .post('/api/users')
-    .send(newUser)
-    .expect(400)
-    .expect('Content-Type',/application\/json/)
-    
-    assert(result.body.error.includes('expected `username` to be unique'))
-  })
 
 
 after(async () => {
