@@ -124,7 +124,7 @@ postsRouter.put('/:id',tokenExtractor, async (request, response, next) => {
     if (!post) {
       return response.status(404).end()
     }
-    post.likes = likes
+    post.likes = likes+1
 
     let updatedNote = await post.save()
     response.status(201).json(updatedNote)

@@ -19,4 +19,12 @@ const createNote = async newObject=>{
   const response = await axios.post(baseUrl,newObject,config)
   return response.data
 }
-export default { getAll, createNote, setToken }
+
+const addLikes=async (blog)=>{
+  const config ={
+    headers:{authorization:token},
+  }
+  const response = await axios.put(`${baseUrl}/${blog.id}`,blog,config)
+  return response.data
+}
+export default { getAll, createNote, setToken, addLikes }
