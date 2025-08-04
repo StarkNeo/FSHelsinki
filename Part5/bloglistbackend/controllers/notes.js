@@ -116,15 +116,15 @@ postsRouter.delete('/:id',tokenExtractor,userExtractor,async (request, response,
 })
 
 postsRouter.put('/:id',tokenExtractor, async (request, response, next) => {
-  const { likes } = request.body
-  console.log("likes in controller: ", likes)
+  //const { likes } = request.body
+  //console.log("likes in controller: ", likes)
   try {
     const post = await Blog.findById(request.params.id)
     console.log(post)
     if (!post) {
       return response.status(404).end()
     }
-    post.likes = likes+1
+    post.likes = post.likes+1
 
     let updatedNote = await post.save()
     response.status(201).json(updatedNote)

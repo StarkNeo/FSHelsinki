@@ -21,10 +21,11 @@ const Blog = ({ blog }) => {
     borderWidth: 1,
     marginBottom: 5
   }
-  console.log(blog.id)
-
-  const addLikes =async ()=>{
+  
+  
+  const addLikes = async ()=>{
     const response = await blogService.addLikes(blog)
+    console.log(response)
     setLikes(response.likes)
   } 
 
@@ -39,7 +40,9 @@ const Blog = ({ blog }) => {
     <div>
       Likes {likes}
       <button onClick={addLikes}>Like</button>
-      </div>  
+      
+      </div>
+      {blog.author}  
     </div>:'' }
     
   </div>
