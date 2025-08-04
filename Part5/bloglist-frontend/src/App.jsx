@@ -14,9 +14,10 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   
+  
   useEffect(() => {
     blogService.getAll()
-      .then(response => setBlogs(response.sort((a,b)=>a.likes-b.likes)))
+      .then(response => setBlogs(response.sort((a, b) => a.likes - b.likes)))
 
   }, [])
 
@@ -33,7 +34,6 @@ const App = () => {
     event.preventDefault()
     try {
       const user = await loginService.login({ username, password })
-      console.log("esto returna el server", user)
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
@@ -56,13 +56,32 @@ const App = () => {
     setPassword(event.target.value)
   }
 
-  
+
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
   }
 
-  
+  const removeNote = async (blog) => {
+    let confirmRemove = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
+    try {
+      if (confirmRemove) {
+        const response = await blogService.removeNote(blog.id)
+        //console.log(response)
+        let blogsUpdated = blogs.filter(b => b.id !== blog.id)
+        alert("Post removed")
+        setBlogs(blogsUpdated)
+
+      } else {
+        console.log("Operacion cancelada")
+      }
+    } catch (error) {
+      //console.error(error.response.data.error)
+      alert(`${error.response.data.error}`)
+    }
+
+
+  }
 
 
   return (
@@ -81,11 +100,11 @@ const App = () => {
           <div>
 
             <h2>create new post</h2>
-            <Addpost />
+            <Addpost  />
           </div>
           <h2>blogs</h2>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} removeNote={removeNote} user={user} />
           )}
 
         </div>

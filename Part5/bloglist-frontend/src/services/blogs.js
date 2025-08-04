@@ -27,4 +27,13 @@ const addLikes=async (blog)=>{
   const response = await axios.put(`${baseUrl}/${blog.id}`,blog,config)
   return response.data
 }
-export default { getAll, createNote, setToken, addLikes }
+
+const removeNote = async (id)=>{
+  const config={
+    headers:{authorization:token}
+  }
+  const response = await axios.delete(`${baseUrl}/${id}`,config)
+  //console.log(response)
+  return response.data
+}
+export default { getAll, createNote, setToken, addLikes, removeNote }

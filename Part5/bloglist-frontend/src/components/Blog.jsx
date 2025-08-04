@@ -2,15 +2,16 @@ import { useEffect, useState } from "react"
 import blogService from "../services/blogs"
 
 
-const Blog = ({ blog }) => {
-  const [viewDetails, setViewDetails]=useState(false)
+const Blog = ({ blog, removeNote }) => {
+  const [viewDetails, setViewDetails] = useState(false)
   const [likes, setLikes] = useState(0)
 
-  useEffect(()=>{
-    setLikes(blog.likes)
-  },[])
 
-  const handleViewDetails=()=>{
+  useEffect(() => {
+    setLikes(blog.likes)
+  }, [blog])
+
+  const handleViewDetails = () => {
     setViewDetails(!viewDetails)
   }
 
@@ -21,34 +22,40 @@ const Blog = ({ blog }) => {
     borderWidth: 1,
     marginBottom: 5
   }
-  
-  
-  const addLikes = async ()=>{
+
+
+  const addLikes = async () => {
     const response = await blogService.addLikes(blog)
     console.log(response)
     setLikes(response.likes)
-  } 
+  }
+
+
 
   return (
-  <div style={blogStyle}>
-    <div>
-      {blog.title} {blog.author}
-      <button onClick={handleViewDetails}>{viewDetails?'hide':'view'}</button>
-    </div>
-    {viewDetails?<div>
-      {blog.url}
-    <div>
-      Likes {likes}
-      <button onClick={addLikes}>Like</button>
-      
+    <div style={blogStyle}>
+      <div>
+        {blog.title} {blog.author}
+        <button onClick={handleViewDetails}>{viewDetails ? 'hide' : 'view'}</button>
       </div>
-      {blog.author}  
-    </div>:'' }
-    
-  </div>
+      {viewDetails ? <div>
+        {blog.url}
+        <div>
+          Likes {likes}
+          <button onClick={addLikes}>Like</button>
+        </div>
 
-)
-    
+      </div> : ''}
+      {blog.author}<br />
+
+      <button onClick={() => removeNote(blog)}>remove</button>
+
+
+
+    </div>
+
+  )
+
 }
 
 export default Blog
