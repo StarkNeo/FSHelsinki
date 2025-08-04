@@ -14,7 +14,6 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   
-  
   useEffect(() => {
     blogService.getAll()
       .then(response => setBlogs(response.sort((a, b) => a.likes - b.likes)))
@@ -104,7 +103,7 @@ const App = () => {
           </div>
           <h2>blogs</h2>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} removeNote={removeNote} user={user} />
+            <Blog key={blog.id} blog={blog} removeNote={removeNote} user={user.username} />
           )}
 
         </div>

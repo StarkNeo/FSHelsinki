@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import blogService from "../services/blogs"
 
 
-const Blog = ({ blog, removeNote }) => {
+const Blog = ({ blog, removeNote, user }) => {
   const [viewDetails, setViewDetails] = useState(false)
   const [likes, setLikes] = useState(0)
 
@@ -47,8 +47,8 @@ const Blog = ({ blog, removeNote }) => {
 
       </div> : ''}
       {blog.author}<br />
-
-      <button onClick={() => removeNote(blog)}>remove</button>
+       {user === blog.user.username?<button onClick={() => removeNote(blog)}>remove</button>:''} 
+      
 
 
 
