@@ -13,12 +13,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  //Add post fields
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
-  const [addNoteVisible, setAddNoteVisible] = useState(false)
-
+  
   useEffect(() => {
     blogService.getAll()
       .then(response => setBlogs(response))
@@ -61,72 +56,14 @@ const App = () => {
     setPassword(event.target.value)
   }
 
-  const handleChangeTitle = (event) => {
-    setTitle(event.target.value)
-  }
-
-  const handleChangeAuthor = (event) => {
-    setAuthor(event.target.value)
-  }
-
-  const handleChangeUrl = (event) => {
-    setUrl(event.target.value)
-  }
-
+  
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
   }
 
-  const handleCreatePost = (event) => {
-    event.preventDefault()
-    console.log(event)
-    const newPost = {
-      title: title,
-      author: author,
-      url: url
-    }
-    blogService.createNote(newPost)
-      .then(response => {
-        let newBlogs = blogs.concat(response)
-        console.log(response)
+  
 
-        setBlogs(newBlogs)
-        setMessage(`a new blog ${response.title} by ${response.author} added`)
-        setTimeout(() => {
-          setMessage(null)
-        }, 5000)
-      }
-      )
-    setTitle('')
-    setAuthor('')
-    setUrl('')
-  }
-
-  const addNote = () => {
-    const hideWhenVisible = { display: addNoteVisible ? 'none' : '' }
-    const showWhenVisible = { display: addNoteVisible ? '' : 'none' }
-    return (
-      <div>
-        <div style={hideWhenVisible}>
-          <button onClick={() => setAddNoteVisible(true)}>new note</button>
-        </div>
-        <div style={showWhenVisible}>
-          <Addpost
-            handleSubmit={handleCreatePost}
-            handleChangeTitle={handleChangeTitle}
-            handleChangeAuthor={handleChangeAuthor}
-            handleChangeUrl={handleChangeUrl}
-            title={title}
-            author={author}
-            url={url} />
-            <button onClick={()=>setAddNoteVisible(false)}>cancel</button>
-        </div>
-
-      </div>
-
-    )
-  }
 
   return (
     <div>
@@ -144,7 +81,7 @@ const App = () => {
           <div>
 
             <h2>create new post</h2>
-            {addNote()}
+            <Addpost />
           </div>
           <h2>blogs</h2>
           {blogs.map(blog =>
